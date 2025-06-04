@@ -1,0 +1,157 @@
+{
+  "name": "wiza-desktop-app",
+  "version": "1.0.0",
+  "description": "Wiza潜在客户搜索工具 - Windows桌面应用",
+  "main": "out/main/index.js",
+  "scripts": {
+    "clean": "rd /s /q node_modules & rd /s /q out & rd /s /q dist & npm install",
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "build:unpack": "npm run build && electron-builder --dir",
+    "build:win": "npm run build && electron-builder",
+    "build:mac": "npm run build && electron-builder --mac",
+    "build:linux": "npm run build && electron-builder --linux",
+    "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+    "lint:eslint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
+    "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
+    "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:unit": "vitest run src/test/unit",
+    "test:integration": "vitest run src/test/integration --exclude=**/RealApiTest.integration.test.tsx",
+    "test:integration:real": "vitest run src/test/integration/RealApiTest.integration.test.tsx",
+    "test:search": "vitest run src/test/unit/IntegratedSearchPage.test.tsx src/test/integration/IntegratedSearchPage.integration.test.tsx",
+    "test:search:watch": "vitest src/test/unit/IntegratedSearchPage.test.tsx src/test/integration/IntegratedSearchPage.integration.test.tsx",
+    "test:search:real": "vitest run src/test/integration/RealApiTest.integration.test.tsx",
+    "test:coverage:unit": "vitest run --coverage src/test/unit",
+    "test:coverage:integration": "vitest run --coverage src/test/integration",
+    "test:ci": "vitest run --reporter=verbose",
+    "test:real-api": "vitest run src/test/integration/RealApiTest.integration.test.tsx --reporter=verbose",
+    "test:real-api:watch": "vitest src/test/integration/RealApiTest.integration.test.tsx"
+  },
+  "dependencies": {
+    "@electron-toolkit/preload": "^3.0.1",
+    "@electron-toolkit/utils": "^3.0.0",
+    "@radix-ui/react-alert-dialog": "^1.0.5",
+    "@radix-ui/react-avatar": "^1.0.4",
+    "@radix-ui/react-checkbox": "^1.0.4",
+    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-dropdown-menu": "^2.0.6",
+    "@radix-ui/react-form": "^0.0.3",
+    "@radix-ui/react-icons": "^1.3.0",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-popover": "^1.1.14",
+    "@radix-ui/react-progress": "^1.1.7",
+    "@radix-ui/react-select": "^2.0.0",
+    "@radix-ui/react-separator": "^1.1.7",
+    "@radix-ui/react-slider": "^1.3.5",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-switch": "^1.2.5",
+    "@radix-ui/react-tabs": "^1.1.12",
+    "@radix-ui/react-toast": "^1.1.5",
+    "@tanstack/react-query": "^5.17.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "electron-updater": "^6.1.7",
+    "i18next": "^23.7.16",
+    "lucide-react": "^0.312.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.48.2",
+    "react-i18next": "^14.0.0",
+    "react-router-dom": "^6.21.1",
+    "tailwind-merge": "^2.2.0",
+    "tailwindcss-animate": "^1.0.7",
+    "xlsx": "^0.18.5",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.8.1",
+    "@electron-toolkit/eslint-config": "^1.0.2",
+    "@electron-toolkit/eslint-config-ts": "^1.0.1",
+    "@electron-toolkit/tsconfig": "^1.0.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^20.17.57",
+    "@types/react": "^18.3.23",
+    "@types/react-dom": "^18.3.7",
+    "@types/xlsx": "^0.0.36",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "@vitest/coverage-v8": "^3.1.4",
+    "@vitest/ui": "^3.1.4",
+    "autoprefixer": "^10.4.16",
+    "electron": "^28.1.4",
+    "electron-builder": "^24.9.1",
+    "electron-packager": "^17.1.2",
+    "electron-vite": "^2.0.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "jsdom": "^26.1.0",
+    "nsis": "^0.0.0",
+    "postcss": "^8.4.32",
+    "prettier": "^3.1.1",
+    "tailwindcss": "^3.4.0",
+    "terser-webpack-plugin": "^5.3.14",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10",
+    "vitest": "^3.1.4"
+  },
+  "author": {
+    "name": "Wiza Desktop Team",
+    "email": "support@wiza.co"
+  },
+  "license": "MIT",
+  "homepage": "https://wiza.co",
+  "build": {
+    "appId": "com.wiza.desktop",
+    "productName": "Wiza潜在客户搜索工具",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "out/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "resources/icon.ico",
+      "sign": false,
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "forceCodeSigning": false,
+    "asar": true,
+    "asarUnpack": [
+      "**/*.{node,dll}"
+    ],
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "installerLanguages": [
+        "zh_CN",
+        "en_US"
+      ]
+    }
+  }
+}

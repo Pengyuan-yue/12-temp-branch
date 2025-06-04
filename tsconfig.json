@@ -1,0 +1,44 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": [
+    "electron.vite.config.*",
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "out",
+    "dist",
+    "**/*.d.ts"
+  ],
+  "compilerOptions": {
+    "composite": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "paths": {
+      "@/*": ["./src/renderer/src/*"],
+      "@/components/*": ["./src/renderer/src/components/*"],
+      "@/lib/*": ["./src/renderer/src/lib/*"],
+      "@/hooks/*": ["./src/renderer/src/hooks/*"],
+      "@/services/*": ["./src/renderer/src/services/*"],
+      "@/stores/*": ["./src/renderer/src/stores/*"],
+      "@/types/*": ["./src/renderer/src/types/*"],
+      "@/utils/*": ["./src/renderer/src/utils/*"]
+    }
+  },
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.web.json"
+    }
+  ]
+} 

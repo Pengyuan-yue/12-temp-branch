@@ -1,0 +1,31 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": [
+    "src/renderer/src/**/*"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": false, // Override tsconfig.base.json's noEmit: true
+    "allowImportingTsExtensions": false, // Override tsconfig.base.json, required when noEmit is false
+    "baseUrl": "./src/renderer/src", // Set baseUrl to the renderer source directory
+    "jsx": "react-jsx",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@/*": ["./*"], // Adjusted for new baseUrl
+      "@/components/*": ["./components/*"], // Adjusted for new baseUrl
+      "@/lib/*": ["./lib/*"], // Adjusted for new baseUrl
+      "@/hooks/*": ["./hooks/*"], // Adjusted for new baseUrl
+      "@/services/*": ["./services/*"], // Adjusted for new baseUrl
+      "@/stores/*": ["./stores/*"], // Adjusted for new baseUrl
+      "@/types/*": ["./types/*"], // Adjusted for new baseUrl
+      "@/utils/*": ["./utils/*"] // Adjusted for new baseUrl
+    }
+  }
+}

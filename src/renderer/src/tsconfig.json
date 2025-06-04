@@ -1,0 +1,12 @@
+{
+  "extends": "../../../tsconfig.web.json",
+  "compilerOptions": {
+    // 如果需要覆盖 tsconfig.web.json 中的 baseUrl 和 paths 以适应当前文件的相对位置
+    // 但通常继承的 baseUrl 和 paths 应该能正常工作
+    // "baseUrl": ".", // 如果继承的 baseUrl 导致问题，可以尝试这个
+    // "paths": { "@/*": ["./*"] } // 同样，如果继承的 paths 导致问题
+  },
+  "include": [ // 明确指定包含范围，以避免与 tsconfig.web.json 的 include 冲突或混淆
+    "./**/*"
+  ]
+}

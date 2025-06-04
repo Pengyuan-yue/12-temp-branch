@@ -1,0 +1,213 @@
+openapi: 3.0.1
+info:
+  title: Wiza API Documentation - Create List
+  version: v1
+components:
+  securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: bearer
+      description: Enter your bearer token (your API key) in the **Authorization**
+        header in the format `Bearer {token}`
+  schemas:
+    ContactDetailsInput:
+      type: object
+      required:
+      - full_name
+      - company
+      properties:
+        full_name:
+          type: string
+          description: Full name of the contact. e.g. "Stephen Hakami".
+          example: Stephen Hakami
+        company:
+          type: string
+          description: Name of the company. e.g. "Wiza".
+          example: Wiza
+        domain:
+          type: string
+          description: Domain of the company. e.g. "wiza.co". This is optional.
+          example: wiza.co
+        profile_url:
+          type: string
+          description: URL of the Linkedin profile. e.g. "https://www.linkedin.com/in/stephen-hakami-5babb21b0/".
+          example: https://www.linkedin.com/in/stephen-hakami-5babb21b0/
+        email:
+          type: string
+          description: Email address of the contact.
+          example: stephen@wiza.co
+    LinkedinProfileInput:
+      type: object
+      required:
+      - profile_url
+      properties:
+        profile_url:
+          type: string
+          description: URL of the Linkedin profile. e.g. "https://www.linkedin.com/in/stephen-hakami-5babb21b0/".
+          example: https://www.linkedin.com/in/stephen-hakami-5babb21b0/
+    EmailInput:
+      type: object
+      required:
+      - email
+      properties:
+        email:
+          type: string
+          description: Email address of the contact.
+          example: stephen@wiza.co
+    Location:
+      type: object
+      properties:
+        v:
+          type: string
+          description: name of the location
+          example: Toronto, Ontario, Canada
+        b:
+          type: string
+          description: type of location
+          enum:
+          - city
+          - state
+          - country
+        s:
+          type: string
+          description: whether to include or exclude the location
+          enum:
+          - i
+          - e
+    ProspectSearchResponse:
+      type: object
+      properties:
+        status:
+          type: object
+          properties:
+            code: {}
+        data:
+          type: object
+          properties:
+            total: {}
+    ListNotFoundResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: List not found
+    ListResponse:
+      type: object
+      properties:
+        status:
+          type: object
+          properties:
+            code: {}
+        type:
+          type: string
+          enum:
+          - list
+          example: list
+        data:
+          type: object
+          properties:
+            id: {}
+    StartIndividualRevealResponse:
+      type: object
+      properties:
+        status:
+          type: object
+          properties:
+            code: {}
+        type:
+          type: string
+          enum:
+          - individual_reveal
+          example: individual_reveal
+        data:
+          type: object
+          properties:
+            id: {}
+    IndividualRevealResponse:
+      type: object
+      properties:
+        status:
+          type: object
+          properties:
+            code: {}
+        type:
+          type: string
+          enum:
+          - individual_reveal
+          example: individual_reveal
+        data:
+          type: object
+          properties:
+            id: {}
+    ContactsResponse:
+      type: object
+      properties:
+        status:
+          type: object
+        data:
+          type: array
+    UnauthorizedErrorResponse:
+      type: object
+      properties:
+        status:
+          type: object
+    CreditsResponse:
+      type: object
+      properties:
+        credits:
+          type: object
+      example:
+        credits:
+          email_credits: unlimited
+          api_credits: 100
+paths:
+  "/api/lists":
+    post:
+      summary: Create List
+      description: |
+        >
+        Create a list of people to enrich.
+
+        Once the list is completed, an update will be posted to the webhook URL as configured in your [ account settings ]( http://wiza.co/app/settings/api ). The payload will be the same as the response of this endpoint. If you wish to do added authentication, the headers in the webhook request will include `x-auth-key` which will be a SHA256 hash of your api key.
+
+        You can get the status of the list by calling the `GET /api/lists/:id` endpoint.
+        And you can get the contacts by calling the `GET /api/lists/:id/contacts` endpoint.
+
+        **Note:** Please check the status of the list as it may fail sometimes due to LinkedIn rate limiting.
+      security:
+      - bearer_auth: []
+      x-codeSamples:
+      - lang: Javascript
+        source: |
+          const apiKey = "your api key here" // update with your api_key
+      - lang: Python
+        source: |
+          import http.client
+          print(data.decode("utf-8"))
+      - lang: Ruby
+        source: |
+          require "uri"
+          puts response.read_body
+      - lang: Curl
+        source: |
+          api_key="your api key here" # update with your api_key
+          }'
+      parameters: []
+      responses:
+        '200':
+          description: successful
+        '401':
+          description: Unauthorized
+        '400':
+          description: Error creating list
+      requestBody:
+        content:
+          application/json: {}
+servers:
+- url: https://wiza.co
+  variables:
+    defaultHost:
+      default: wiza.co

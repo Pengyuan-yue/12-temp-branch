@@ -1,0 +1,1 @@
+export { SearchSettings } from './index' 

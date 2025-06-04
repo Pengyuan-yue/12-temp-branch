@@ -1,0 +1,8 @@
+node_modules/
+out/
+dist/
+dist-electron/
+*.d.ts
+*.js.map
+test-*.js
+技术验证测试.js 
