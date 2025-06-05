@@ -1,4 +1,4 @@
-import { shell, BrowserWindow, ipcMain } from 'electron'
+import { shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { registerApiHandlers } from './api-handlers'
 
@@ -30,7 +30,8 @@ async function createWindow(): Promise<void> {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
       contextIsolation: true,
-      nodeIntegration: false
+      nodeIntegration: false,
+      nodeIntegrationInWorker: true
     }
   })
 
@@ -83,6 +84,115 @@ async function startApp() {
 
   // IPC测试
   ipcMain.handle('ping', () => 'pong')
+  
+  // 添加文件夹选择处理
+  ipcMain.handle('select-directory', async () => {
+    try {
+      console.log('正在打开文件夹选择对话框...')
+      const result = await dialog.showOpenDialog({
+        properties: ['openDirectory'],
+        title: '选择导出文件保存位置'
+      })
+      console.log('文件夹选择对话框结果:', result)
+      
+      if (result.canceled) {
+        console.log('用户取消了文件夹选择')
+        return { success: false, error: '用户取消操作' }
+      }
+      
+      if (!result.filePaths || result.filePaths.length === 0) {
+        console.log('未选择任何文件夹')
+        return { success: false, error: '未选择任何文件夹' }
+      }
+      
+      const selectedPath = result.filePaths[0]
+      console.log('用户选择的文件夹路径:', selectedPath)
+      
+      // 检查路径是否有效
+      const fs = await import('fs')
+      const path = await import('path')
+      
+      try {
+        // 尝试创建测试文件检查写入权限
+        const testFile = path.join(selectedPath, 'wiza_test_permission.tmp')
+        fs.writeFileSync(testFile, '权限测试文件')
+        fs.unlinkSync(testFile)
+        console.log('文件夹写入权限验证通过')
+      } catch (err) {
+        console.error('文件夹写入权限验证失败:', err)
+        return { 
+          success: false, 
+          error: `无写入权限: ${err instanceof Error ? err.message : '未知错误'}` 
+        }
+      }
+      
+      return { success: true, path: selectedPath }
+    } catch (error) {
+      console.error('文件夹选择错误:', error)
+      return { 
+        success: false, 
+        error: `文件夹选择失败: ${error instanceof Error ? error.message : '未知错误'}` 
+      }
+    }
+  })
+
+  // 添加导出到Excel处理程序
+  ipcMain.handle('export-to-excel', async (_, data, filename) => {
+    try {
+      console.log('正在导出数据到Excel...');
+      console.log(`数据条数: ${data.length}, 文件名: ${filename}`);
+      
+      const fs = await import('fs');
+      const path = await import('path');
+      const ExcelJS = await import('exceljs');
+      
+      // 创建工作簿和工作表
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('联系人数据');
+      
+      // 如果数据为空，返回错误
+      if (!data || data.length === 0) {
+        console.error('导出数据为空');
+        return false;
+      }
+      
+      // 添加表头
+      const headers = Object.keys(data[0]);
+      worksheet.addRow(headers);
+      
+      // 添加数据行
+      data.forEach(item => {
+        const row = [];
+        headers.forEach(header => {
+          row.push(item[header] || '');
+        });
+        worksheet.addRow(row);
+      });
+      
+      // 设置列宽
+      worksheet.columns.forEach(column => {
+        column.width = 20;
+      });
+      
+      // 获取下载目录
+      const downloadPath = app.getPath('downloads');
+      const filePath = path.join(downloadPath, `${filename}.xlsx`);
+      
+      console.log(`保存文件到: ${filePath}`);
+      
+      // 写入文件
+      await workbook.xlsx.writeFile(filePath);
+      console.log('Excel文件导出成功');
+      
+      // 打开文件所在目录
+      shell.showItemInFolder(filePath);
+      
+      return true;
+    } catch (error) {
+      console.error('导出到Excel失败:', error);
+      return false;
+    }
+  });
 
   // 注册API处理器
   registerApiHandlers()

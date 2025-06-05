@@ -3,6 +3,9 @@ import { useAppStore } from '../../../../stores/appStore'
 import { getWizaApi } from '../../../../services/wizaApi'
 import { exportService } from '../../../../services/exportService'
 
+// 不在这里重新声明 window.electronAPI，避免类型冲突
+// 全局类型声明应该放在一个单独的类型声明文件中
+
 interface ExportSettings {
   format: 'excel' | 'csv'
   segment: 'people' | 'valid' | 'risky'
@@ -33,6 +36,32 @@ export const useDataExport = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredContacts, setFilteredContacts] = useState<any[]>([])
   const [selectedContacts, setSelectedContacts] = useState<string[]>([])
+  const [isElectronApiAvailable, setIsElectronApiAvailable] = useState(false)
+
+  // 检查 electronAPI 是否可用
+  useEffect(() => {
+    const checkElectronApi = () => {
+      const isAvailable = typeof window !== 'undefined' && 'electronAPI' in window;
+      console.log('检查 electronAPI 是否可用:', isAvailable);
+      setIsElectronApiAvailable(isAvailable);
+      
+      if (!isAvailable) {
+        console.log('electronAPI 尚未加载，稍后重试...');
+        // 如果 API 不可用，3秒后重试
+        setTimeout(checkElectronApi, 3000);
+      } else {
+        console.log('electronAPI 已成功加载');
+      }
+    };
+    
+    // 初始检查
+    checkElectronApi();
+    
+    // 组件卸载时清理
+    return () => {
+      // 清理工作
+    };
+  }, []);
 
   // 可导出的字段（不包含图标，图标在组件中定义）
   const availableFields = [
@@ -237,20 +266,51 @@ export const useDataExport = () => {
       const format = alternateFormat || exportSettings.format
       let success = false
       
-      if (format === 'excel') {
-        success = exportService.exportToExcel(
-          filteredData, 
-          exportSettings.filename, 
-          exportSettings.fields,
-          fieldLabels
-        )
+      // 检查 electronAPI 是否可用
+      if (isElectronApiAvailable && window.electronAPI) {
+        console.log('尝试使用 Electron API 导出到 Excel');
+        try {
+          // 检查 exportToExcel 方法是否存在并使用类型断言
+          if (window.electronAPI && 'exportToExcel' in window.electronAPI) {
+            console.log('使用 Electron API 导出到 Excel');
+            success = await (window.electronAPI as ElectronAPI).exportToExcel(filteredData, exportSettings.filename);
+          } else {
+            console.log('Electron API 中没有 exportToExcel 方法，使用浏览器导出');
+            success = exportService.exportToExcel(
+              filteredData, 
+              exportSettings.filename, 
+              exportSettings.fields,
+              fieldLabels
+            );
+          }
+        } catch (err) {
+          console.error('Electron 导出失败，回退到浏览器导出:', err);
+          // 回退到浏览器导出
+          success = exportService.exportToExcel(
+            filteredData, 
+            exportSettings.filename, 
+            exportSettings.fields,
+            fieldLabels
+          );
+        }
       } else {
-        success = exportService.exportToCsv(
-          filteredData, 
-          exportSettings.filename, 
-          exportSettings.fields,
-          fieldLabels
-        )
+        // 使用浏览器端导出服务
+        console.log('使用浏览器端导出服务');
+        if (format === 'excel') {
+          success = exportService.exportToExcel(
+            filteredData, 
+            exportSettings.filename, 
+            exportSettings.fields,
+            fieldLabels
+          );
+        } else {
+          success = exportService.exportToCsv(
+            filteredData, 
+            exportSettings.filename, 
+            exportSettings.fields,
+            fieldLabels
+          );
+        }
       }
 
       // 更新任务状态
@@ -286,6 +346,7 @@ export const useDataExport = () => {
     handleExport,
     toggleField,
     toggleAllContacts,
-    toggleContact
+    toggleContact,
+    isElectronApiAvailable
   }
 } 

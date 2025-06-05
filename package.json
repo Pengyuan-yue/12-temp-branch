@@ -134,7 +134,6 @@
           ]
         }
       ],
-      "icon": "resources/icon.ico",
       "sign": false,
       "requestedExecutionLevel": "asInvoker"
     },

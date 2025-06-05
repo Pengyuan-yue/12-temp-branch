@@ -217,7 +217,7 @@ describe('行业字段测试', () => {
       console.log('🔍 验证有效行业枚举值...')
       
       let successCount = 0
-      let totalCount = validIndustries.length
+      const totalCount = validIndustries.length
       
       for (const industry of validIndustries) {
         try {

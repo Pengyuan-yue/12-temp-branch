@@ -186,7 +186,7 @@ const IntegratedSearchPage: React.FC = () => {
       return
     }
 
-    let locationValue = newLocation.trim()
+    const locationValue = newLocation.trim()
     
     // 根据API规范验证格式
     if (locationType === 'city') {

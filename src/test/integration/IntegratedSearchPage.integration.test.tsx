@@ -317,7 +317,7 @@ describe('IntegratedSearchPage 集成测试', () => {
       render(<IntegratedSearchPage />)
 
       // 添加城市类型地理位置
-      let cityInput = screen.getByPlaceholderText('城市')
+      const cityInput = screen.getByPlaceholderText('城市')
       let stateInput = screen.getByPlaceholderText('州/省')
       let countryInput = screen.getByPlaceholderText('国家')
       const addLocationButton = screen.getByRole('button', { name: /添加地点/i })
